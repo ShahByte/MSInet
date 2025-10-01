@@ -42,10 +42,10 @@ def train_model(model, data, im, labels, data_name):
             cv2.imwrite(f'output/MSInet_seg_{data_name}_rgb_{epoch}.png', seg_rgb)
 
             
-            plt.imshow(seg_rgb)
-            plt.title("Segmentation Output")
-            plt.axis('off')  
-            plt.show() 
+            #plt.imshow(seg_rgb)
+            #plt.title("Segmentation Output")
+            #plt.axis('off')  
+            #plt.show() 
 
             
             patch_sim = contrastive_patch_loss(output1, 5)
