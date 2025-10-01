@@ -31,20 +31,48 @@ def train_model(model, data, im, labels, data_name):
         seg_map = clusify.data.cpu().numpy()
         nLabels = len(np.unique(seg_map))
 
+
+        import matplotlib.pyplot as plt
+
+        
         if args.visualize:
+            
             seg_rgb = np.array([label_colours[c % 100] for c in seg_map])
             seg_rgb = seg_rgb.reshape(im.shape).astype(np.uint8)
+    
+          
             np.save(f'output/MSInet_seg_{data_name}_rgb.npy', seg_rgb)
-            cv2.imshow("output", seg_rgb)
             cv2.imwrite(f'output/MSInet_seg_{data_name}_rgb_{epoch}.png', seg_rgb)
-            cv2.waitKey(50)
+
+            
+            plt.imshow(seg_rgb)
+            plt.title("Segmentation Output")
+            plt.axis('off')  
+            plt.show() 
+
+            
             patch_sim = contrastive_patch_loss(output1, 5)
             rf_target = superpixel_refinement_1(seg_map, labels)
             if use_cuda:
                 rf_target = rf_target.cuda()
-            loss = loss_fn(output, rf_target)*0.5 + patch_sim*4
+            loss = loss_fn(output, rf_target) * 0.5 + patch_sim * 4
             loss.backward()
             optimizer.step()
+
+        #if args.visualize:
+            #seg_rgb = np.array([label_colours[c % 100] for c in seg_map])
+            #seg_rgb = seg_rgb.reshape(im.shape).astype(np.uint8)
+            #np.save(f'output/MSInet_seg_{data_name}_rgb.npy', seg_rgb)
+            #cv2.imshow("output", seg_rgb)
+            #cv2.imwrite(f'output/MSInet_seg_{data_name}_rgb_{epoch}.png', seg_rgb)
+            #cv2.waitKey(50)
+            #patch_sim = contrastive_patch_loss(output1, 5)
+            #rf_target = superpixel_refinement_1(seg_map, labels)
+            #if use_cuda:
+                #rf_target = rf_target.cuda()
+            #loss = loss_fn(output, rf_target)*0.5 + patch_sim*4
+            #loss.backward()
+            #optimizer.step()
 
             loss_value = loss.item()
             loss_values.append(loss_value)
