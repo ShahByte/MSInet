@@ -42,7 +42,7 @@ def train_model(model, data, im, labels, data_name):
             cv2.imwrite(f'output/MSInet_seg_{data_name}_rgb_{epoch}.png', seg_rgb)
 
             # Clear any previous figures and plot the new one
-            plt.clf()  # Clear the current figure
+            #plt.clf()  # Clear the current figure
             plt.imshow(seg_rgb)
             plt.title(f"Segmentation Output - Epoch {epoch + 1}")
             plt.axis('off')  # Hide axis
