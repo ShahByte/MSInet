@@ -34,37 +34,36 @@ def train_model(model, data, im, labels, data_name):
         nLabels = len(np.unique(seg_map))
 
         
-        if args.visualize and (epoch + 1) % 15 == 0:  # Display every 15 epochs
-            seg_rgb = np.array([label_colours[c % 100] for c in seg_map])
-            seg_rgb = seg_rgb.reshape(im.shape).astype(np.uint8)
+        if epoch % 15 == 0:  # Display the figure after every 15 epochs
+            if args.visualize:
+                seg_rgb = np.array([label_colours[c % 100] for c in seg_map])
+                seg_rgb = seg_rgb.reshape(im.shape).astype(np.uint8)
 
-            np.save(f'output/MSInet_seg_{data_name}_rgb.npy', seg_rgb)
-            cv2.imwrite(f'output/MSInet_seg_{data_name}_rgb_{epoch}.png', seg_rgb)
+                np.save(f'output/MSInet_seg_{data_name}_rgb_epoch_{epoch}.npy', seg_rgb)
+                cv2.imwrite(f'output/MSInet_seg_{data_name}_rgb_epoch_{epoch}.png', seg_rgb)
 
-            # Clear any previous figures and plot the new one
-            #plt.clf()  # Clear the current figure
-            plt.imshow(seg_rgb)
-            plt.title(f"Segmentation Output - Epoch {epoch + 1}")
-            plt.axis('off')  # Hide axis
-            plt.show()  # Render plot in the notebook
+                plt.imshow(seg_rgb)
+                plt.title(f"Segmentation Output - Epoch {epoch}")
+                plt.axis('off')  
+                plt.show()
 
 
             
-            patch_sim = contrastive_patch_loss(output1, 5)
-            rf_target = superpixel_refinement_1(seg_map, labels)
-            if use_cuda:
-                rf_target = rf_target.cuda()
-            loss = loss_fn(output, rf_target) * 0.5 + patch_sim * 4
-            loss.backward()
-            optimizer.step()
+        patch_sim = contrastive_patch_loss(output1, 5)
+        rf_target = superpixel_refinement_1(seg_map, labels)
+        if use_cuda:
+            rf_target = rf_target.cuda()
+        loss = loss_fn(output, rf_target) * 0.5 + patch_sim * 4
+        loss.backward()
+        optimizer.step()
 
 
-            loss_value = loss.item()
-            loss_values.append(loss_value)
-            print(epoch, '/', len(data), ':', nLabels, loss.item())
-            if nLabels <= args.minLabels:
-                print("nLabels", nLabels, "reached minLabels", args.minLabels, ".")
-                break
+        loss_value = loss.item()
+        loss_values.append(loss_value)
+        print(epoch, '/', len(data), ':', nLabels, loss.item())
+        if nLabels <= args.minLabels:
+            print("nLabels", nLabels, "reached minLabels", args.minLabels, ".")
+           break
     # Plot loss
     plt.plot(loss_values)
     plt.xlabel('Epochs')
