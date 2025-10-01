@@ -7,6 +7,8 @@ from config import args
 from patch_loss import contrastive_patch_loss
 from utilis import superpixel_refinement_1
 use_cuda = torch.cuda.is_available()
+%matplotlib inline
+
 
 def train_model(model, data, im, labels, data_name):
     loss_fn = torch.nn.CrossEntropyLoss()
@@ -91,6 +93,7 @@ def train_model(model, data, im, labels, data_name):
         seg_map = seg_map.data.cpu().numpy()
         seg_map_out = np.array([label_colours[c % 100] for c in seg_map])
         seg_map_out = seg_map_out.reshape(im.shape).astype(np.uint8)
+        plt.clf()
         plt.imshow(seg_map_out)
         plt.show()
         cv2.imwrite(f"output/MSInet{data_name}_.png", seg_map_out)
