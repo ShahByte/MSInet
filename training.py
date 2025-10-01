@@ -7,7 +7,7 @@ from config import args
 from patch_loss import contrastive_patch_loss
 from utilis import superpixel_refinement_1
 use_cuda = torch.cuda.is_available()
-%matplotlib inline
+
 
 
 def train_model(model, data, im, labels, data_name):
