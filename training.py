@@ -39,11 +39,12 @@ def train_model(model, data, im, labels, data_name):
             # Save the output to file
             np.save(f'output/MSInet_seg_{data_name}_rgb.npy', seg_rgb)
             cv2.imwrite(f'output/MSInet_seg_{data_name}_rgb_{epoch}.png', seg_rgb)
-    
+            print("here before CV2")
             cv2_imshow(seg_rgb)
             plt.title(f"Segmentation Output - Epoch {epoch}")
             plt.axis('off')  # Hide axes for better visualization
             plt.show()
+            print("here after CV2")
             patch_sim = contrastive_patch_loss(output1, 5)
             rf_target = superpixel_refinement_1(seg_map, labels)
             if use_cuda:
