@@ -32,7 +32,7 @@ def train_model(model, data, im, labels, data_name):
         seg_map = clusify.data.cpu().numpy()
         nLabels = len(np.unique(seg_map))
 
-        if args.visualize:
+        if args.visualize and epoch % 20 == 0:
             seg_rgb = np.array([label_colours[c % 100] for c in seg_map])
             seg_rgb = seg_rgb.reshape(im.shape).astype(np.uint8)
     
