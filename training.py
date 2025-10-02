@@ -45,20 +45,20 @@ def train_model(model, data, im, labels, data_name):
             #plt.axis('off')  # Hide axes for better visualization
             plt.show()
             
-            patch_sim = contrastive_patch_loss(output1, 5)
-            rf_target = superpixel_refinement_1(seg_map, labels)
-            if use_cuda:
-                rf_target = rf_target.cuda()
-            loss = loss_fn(output, rf_target)*0.5 + patch_sim*4
-            loss.backward()
-            optimizer.step()
+        patch_sim = contrastive_patch_loss(output1, 5)
+        rf_target = superpixel_refinement_1(seg_map, labels)
+        if use_cuda:
+            rf_target = rf_target.cuda()
+        loss = loss_fn(output, rf_target)*0.5 + patch_sim*4
+        loss.backward()
+        optimizer.step()
 
-            loss_value = loss.item()
-            loss_values.append(loss_value)
-            print(epoch, '/', len(data), ':', nLabels, loss.item())
-            if nLabels <= args.minLabels:
-                print("nLabels", nLabels, "reached minLabels", args.minLabels, ".")
-                break
+        loss_value = loss.item()
+        loss_values.append(loss_value)
+        print(epoch, '/', len(data), ':', nLabels, loss.item())
+        if nLabels <= args.minLabels:
+            print("nLabels", nLabels, "reached minLabels", args.minLabels, ".")
+            break
     # Plot loss
     plt.plot(loss_values)
     plt.xlabel('Epochs')
