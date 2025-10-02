@@ -21,8 +21,8 @@ def main():
     #load_image = reduce_dimensions_umap(load_image, n_components=3)
     im = load_image.reshape(70, 70, 3)
 
-    print(f"Min value in normalized array: {im.min()}")
-    print(f"Max value in normalized array: {im.max()}")
+    #print(f"Min value in normalized array: {im.min()}")
+    #print(f"Max value in normalized array: {im.max()}")
 
     data = torch.from_numpy(
         np.array([im.transpose(2, 0, 1).astype('float32') / 255.])
