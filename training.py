@@ -7,6 +7,7 @@ from config import args
 from patch_loss import contrastive_patch_loss
 from utilis import superpixel_refinement_1
 use_cuda = torch.cuda.is_available()
+from google.colab.patches import cv2_imshow
 
 def train_model(model, data, im, labels, data_name):
     loss_fn = torch.nn.CrossEntropyLoss()
@@ -39,8 +40,7 @@ def train_model(model, data, im, labels, data_name):
             np.save(f'output/MSInet_seg_{data_name}_rgb.npy', seg_rgb)
             cv2.imwrite(f'output/MSInet_seg_{data_name}_rgb_{epoch}.png', seg_rgb)
     
-            # Display the image using matplotlib
-            plt.imshow(seg_rgb)
+            cv2_imshow(seg_rgb)
             plt.title(f"Segmentation Output - Epoch {epoch}")
             plt.axis('off')  # Hide axes for better visualization
             plt.show()
