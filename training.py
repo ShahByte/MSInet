@@ -9,6 +9,17 @@ from utilis import superpixel_refinement_1
 use_cuda = torch.cuda.is_available()
 from google.colab.patches import cv2_imshow
 
+
+loss_hpy = torch.nn.L1Loss(reduction='mean')  
+loss_hpz = torch.nn.L1Loss(reduction='mean') 
+
+HPy_target = torch.zeros(70 - 1, 70, args.inChannel)
+HPz_target = torch.zeros(70, 70 - 1, args.inChannel)
+
+if use_cuda:
+    HPy_target = HPy_target.cuda()
+    HPz_target = HPz_target.cuda()
+    
 def train_model(model, data, im, labels, data_name):
     loss_fn = torch.nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=0.9)
@@ -31,7 +42,15 @@ def train_model(model, data, im, labels, data_name):
         clusify = torch.argmax(output, dim=1)
         seg_map = clusify.data.cpu().numpy()
         nLabels = len(np.unique(seg_map))
+        # Calculate continuity losses
+        outputHP = output.reshape((70, 70, args.inChannel))
+        HPy = outputHP[1:, :, :] - outputHP[0:-1, :, :]
+        HPz = outputHP[:, 1:, :] - outputHP[:, 0:-1, :]
+        print("LOSS_CONT")
 
+        lhpy = loss_hpy(HPy, HPy_target) 
+        lhpz = loss_hpz(HPz, HPz_target) 
+        
         if args.visualize and epoch % 20 == 0:
             seg_rgb = np.array([label_colours[c % 100] for c in seg_map])
             seg_rgb = seg_rgb.reshape(im.shape).astype(np.uint8)
