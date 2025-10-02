@@ -34,10 +34,16 @@ def train_model(model, data, im, labels, data_name):
         if args.visualize:
             seg_rgb = np.array([label_colours[c % 100] for c in seg_map])
             seg_rgb = seg_rgb.reshape(im.shape).astype(np.uint8)
+    
+            # Save the output to file
             np.save(f'output/MSInet_seg_{data_name}_rgb.npy', seg_rgb)
-            cv2.imshow("output", seg_rgb)
             cv2.imwrite(f'output/MSInet_seg_{data_name}_rgb_{epoch}.png', seg_rgb)
-            cv2.waitKey(50)
+    
+            # Display the image using matplotlib
+            plt.imshow(seg_rgb)
+            plt.title(f"Segmentation Output - Epoch {epoch}")
+            plt.axis('off')  # Hide axes for better visualization
+            plt.show()
             patch_sim = contrastive_patch_loss(output1, 5)
             rf_target = superpixel_refinement_1(seg_map, labels)
             if use_cuda:
