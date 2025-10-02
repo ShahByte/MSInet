@@ -25,9 +25,9 @@ def train_model(model, data, im, labels, data_name):
 
         optimizer.zero_grad()
         output1 = model(data_batch)[0]
-        print(output1.shape, 'shape of model output')
+        #print(output1.shape, 'shape of model output')
         output = output1.permute(1, 2, 0).contiguous().view(-1, args.outClust)
-        print(output.shape, 'after reshape output')
+        #print(output.shape, 'after reshape output')
         clusify = torch.argmax(output, dim=1)
         seg_map = clusify.data.cpu().numpy()
         nLabels = len(np.unique(seg_map))
@@ -39,12 +39,12 @@ def train_model(model, data, im, labels, data_name):
             # Save the output to file
             np.save(f'output/MSInet_seg_{data_name}_rgb.npy', seg_rgb)
             cv2.imwrite(f'output/MSInet_seg_{data_name}_rgb_{epoch}.png', seg_rgb)
-            print("here before CV2")
+    
             cv2_imshow(seg_rgb)
             plt.title(f"Segmentation Output - Epoch {epoch}")
             plt.axis('off')  # Hide axes for better visualization
             plt.show()
-            print("here after CV2")
+            
             patch_sim = contrastive_patch_loss(output1, 5)
             rf_target = superpixel_refinement_1(seg_map, labels)
             if use_cuda:
