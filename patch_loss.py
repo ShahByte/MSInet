@@ -23,7 +23,7 @@ def compute_pairwise_similarities_batched_new(center_pixels, batch_size, dim=-1)
     return pairwise_similarities
 
 
-def contrastive_patch_loss(tensor, window_size, weight_sim=1, threshold=0.55, batch_size=2048):
+def contrastive_patch_loss(tensor, window_size, weight_sim=4, threshold=0.55, batch_size=2048):
     C, H, W = tensor.shape
     padding = window_size // 2
     tensor = tensor.unsqueeze(0)
